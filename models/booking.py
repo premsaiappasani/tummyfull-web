@@ -1,17 +1,44 @@
-from flask_sqlalchemy import SQLAlchemy
+from bson import ObjectId
 from datetime import datetime
-db = SQLAlchemy()
+from db.connection import get_db
 
-class Booking(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    booking_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    type = db.Column(db.String(50))
+class Booking:
+    def __init__(self, user_id, booking_date=None, _id=None, type='booking'):
+        self._id = _id if _id else ObjectId()
+        self.user_id = user_id
+        self.booking_date = booking_date if booking_date else datetime.utcnow()
+        self.type = type
+        self.collection = get_db().get_client().tummyfull.bookings
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'booking',
-        'polymorphic_on': type
-    }
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            user_id=data['user_id'],
+            booking_date=data.get('booking_date'),
+            _id=data.get('_id'),
+            type=data.get('type', 'booking')
+        )
+
+    def to_dict(self):
+        return {
+            '_id': self._id,
+            'user_id': self.user_id,
+            'booking_date': self.booking_date,
+            'type': self.type
+        }
+
+    def save(self):
+        self.collection.insert_one(self.to_dict())
+
+    @classmethod
+    def find_by_id(cls, id):
+        data = get_db().get_client().tummyfull.bookings.find_one({'_id': ObjectId(id)})
+        return cls.from_dict(data) if data else None
+
+    @classmethod
+    def find_by_user_id(cls, user_id):
+        cursor = get_db().get_client().tummyfull.bookings.find({'user_id': user_id})
+        return [cls.from_dict(data) for data in cursor]
 
     def __repr__(self):
-        return f'<Booking {self.id}>'
+        return f'<Booking {self._id}>'

@@ -1,20 +1,13 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from db.connection import get_db
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config.from_object('app.config.Config')
 
-    db.init_app(app)
+    app.db = get_db()
 
-    with app.app_context():
-        import models
-        db.create_all()
-
-    from .routes import main_routes
-    app.register_blueprint(main_routes)
+    from controllers import register_blueprints
+    register_blueprints(app)
 
     return app
