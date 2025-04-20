@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Employee Booking App</title>
+		<style>
+			body {
+				font-family: sans-serif;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				min-height: 100vh;
+				background-color: #f0f0f0;
+				margin: 0;
+			}
+			.container {
+				text-align: center;
+			}
+			.cards-container {
+				display: flex;
+				gap: 20px;
+				justify-content: center;
+			}
+			.card {
+				background-color: #fff;
+				border-radius: 8px;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+				padding: 20px;
+				width: 200px;
+				cursor: pointer;
+				transition: transform 0.2s ease-in-out;
+			}
+			.card:hover {
+				transform: translateY(-5px);
+			}
+			.card h3 {
+				margin-top: 0;
+				color: #333;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Welcome to the Booking App</h1>
+			<div class="cards-container">
+				<div class="card" id="bookMealCard">
+					<h3>Book a Meal</h3>
+					<p>Click here to book your daily meal.</p>
+				</div>
+				<div class="card" id="bookCabCard">
+					<h3>Book a Ride</h3>
+					<p>Click here to book your daily commute.</p>
+					<p>Coming soon........</p>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			document
+				.getElementById("bookMealCard")
+				.addEventListener("click", function () {
+					window.location.href = "/login";
+				});
+		</script>
+	</body>
+</html>
